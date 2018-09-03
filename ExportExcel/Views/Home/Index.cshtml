@@ -1,0 +1,71 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title – приложение ASP.NET</title>
+    
+</head>
+<body>
+    <button onclick="export_excel()">Click to Excel</button>
+    <table id="resultTable">
+        <caption>Перечень продуктов</caption>
+        <tr>
+            <th>№ п/п</th>
+            <th>Наименование товара</th>
+            <th>Ед. изм.</th>
+            <th>Количество</th>
+            <th>Цена за ед. изм., руб.</th>
+            <th>Стоимость, руб.</th>
+        </tr>
+        <tr>
+            <td>1.</td>
+            <td>Томаты свежие</td>
+            <td>кг</td>
+            <td>15,20</td>
+            <td>69,00</td>
+            <td>1048,80</td>
+        </tr>
+        <tr>
+            <td>2.</td>
+            <td>Огурцы свежие</td>
+            <td>кг</td>
+            <td>2,50</td>
+            <td>48,00</td>
+            <td>120,00</td>
+        </tr>
+        <tr>
+            <td colspan="5" style="text-align:right">ИТОГО:</td>
+            <td>1168,80</td>
+        </tr>
+    </table>
+    <script>
+        var tableToExcel = (function () {
+            var uri = 'data:application/vnd.ms-excel;base64,'
+                , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--><meta http-equiv="content-type" content="text/plain; charset=UTF-8"/></head><body><table>{table}</table></body></html>'
+                , base64 = function (s) { return window.btoa(unescape(encodeURIComponent(s))) }
+                , format = function (s, c) {
+                    return s.replace(/{(\w+)}/g, function (m, p) { return c[p]; })
+                }
+                , downloadURI = function (uri, name) {
+                    var link = document.createElement("a");
+                    link.download = name;
+                    link.href = uri;
+                    link.click();
+                }
+
+            return function (table, name, fileName) {
+                if (!table.nodeType) table = document.getElementById(table)
+                var ctx = { worksheet: name || 'Worksheet', table: table.innerHTML }
+                var resuri = uri + base64(format(template, ctx))
+                downloadURI(resuri, fileName);
+            }
+        })();
+
+        function export_excel() {
+            tableToExcel('resultTable', 'Смета', 'Ремрайон_смета.xls');
+        }
+    </script>
+</body>
+</html>
